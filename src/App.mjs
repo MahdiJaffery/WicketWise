@@ -38,6 +38,44 @@ app.post('/api/auth', async (request, response) => {
     }
 })
 
+app.post('/api/auth/register', async (request, response) => {
+    let { body: { username, password } } = request;
+
+    try {
+        let Unique = false, modification = false;
+        do {
+            const res = await pool.query('Select * from Users where username = $1', [username]);
+
+            if (res.rowCount === 0)
+                Unique = true;
+            else {
+                const randomNumber = Math.floor(Math.random() * 100);
+                username += randomNumber;
+                modification = true;
+            }
+        } while (!Unique)
+
+        if (modification)
+            return response.status(400).send(`Username already Taken\nTry ${username}`);
+
+        let res = await pool.query('Select * from Users');
+
+        const UserId = res.rowCount + 1;
+
+        res = await pool.query('Insert into Users (UserId, username, password) values ($1, $2, $3)',
+            [UserId, username, password]
+        );
+
+        const User = { UserId, username, password };
+
+        request.session.user = User;
+        response.cookie('Cricket', 'Wicket', { maxAge: 6000 * 10 });
+        return response.status(201).send(User);
+    } catch (err) {
+        console.log(err.message);
+    }
+})
+
 app.listen(PORT, () => {
     console.log(`Server listening on PORT : ${PORT}`);
 })
