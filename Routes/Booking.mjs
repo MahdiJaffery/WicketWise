@@ -1,6 +1,8 @@
 import { Router } from "express";
-import { validationCheck } from "../Utils/Middleware.mjs";
+
+import { parseId, validationCheck } from "../Utils/Middleware.mjs";
 import pool from "../Utils/Database.mjs";
+
 const router = Router();
 
 router.get('/', validationCheck, async (request, response) => {
@@ -47,7 +49,7 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
     }
 })
 
-router.delete('/remove/:id', validationCheck, async (request, response) => {
+router.delete('/remove/:id', validationCheck, parseId, async (request, response) => {
     const { parsedId } = request;
     console.log(parsedId);
     try {
