@@ -47,4 +47,21 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
     }
 })
 
+router.delete('/remove/:id', validationCheck, async (request, response) => {
+    const { parsedId } = request;
+    console.log(parsedId);
+    try {
+        let res = await pool.query('Select * from Bookings where bookingid = $1', [parsedId]);
+
+        if (res.rowCount === 0) return response.status(404).send('Booking Not Found');
+
+        res = await pool.query('Update Bookings set status = $1 where bookingid =  $2', ['Invalid', parsedId]);
+
+        return response.status(200).send('Booking Nullified :(');
+    } catch (err) {
+        console.log(err.message);
+        return response.sendStatus(500);
+    }
+})
+
 export default router;

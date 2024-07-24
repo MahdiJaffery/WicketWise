@@ -8,3 +8,13 @@ export const validationCheck = (request, response, next) => {
     else
         return response.sendStatus(401);
 }
+
+export const parseId = (request, response, next) => {
+    const { params: { id } } = request;
+    const parsedId = parseInt(id);
+
+    if (isNaN(parsedId)) return response.sendStatus(400);
+
+    request.parsedId = parsedId;
+    next();
+}
