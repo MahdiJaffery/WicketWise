@@ -53,7 +53,7 @@ router.delete('/remove/:id', validationCheck, parseId, async (request, response)
     const { parsedId } = request;
     console.log(parsedId);
     try {
-        let res = await pool.query('Select * from Bookings where bookingid = $1', [parsedId]);
+        let res = await pool.query('Select * from Bookings where bookingid = $1 and status = $2', [parsedId, 'Valid']);
 
         if (res.rowCount === 0) return response.status(404).send('Booking Not Found');
 
