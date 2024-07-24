@@ -64,13 +64,37 @@ router.post('/register', validationCheck, async (request, response) => {
 
         const TourneyID = res.rows[0].tournamentid;
 
-        res = await pool.query('Insert into Teams values ($1, $2, $3, $4)',
-            [TeamID, TourneyID, teamname, memberCount]
+        res = await pool.query('Insert into Teams values ($1, $2, $3, $4, $5)',
+            [TeamID, TourneyID, teamname, memberCount, 'Registered']
         );
 
         res = await pool.query('Update Tournaments set TeamsRgd = TeamsRgd + 1 where TournamentId = $1', [TourneyID]);
 
-        return response.status(201).send('Registered Team for Tournament');
+        return response.status(201).send({ msg: 'Registered Team for Tournament', teamid: TeamID });
+    } catch (err) {
+        console.log(err.message);
+        return response.sendStatus(500);
+    }
+})
+
+router.post('/cancelReg', validationCheck, async (request, response) => {
+    let { body: { teamid } } = request;
+    teamid = parseInt(teamid);
+
+    if (isNaN(teamid)) return response.sendStatus(400);
+
+    if (!teamid)
+        return response.status(400).send('Enter\nteamid: <teamid>');
+
+    try {
+        let res = await pool.query('Select * from Teams where teamid = $1 and status = $2', [teamid, 'Registered']);
+
+        if (!res.rowCount)
+            return response.status(200).send('Team Not Registered');
+
+        res = await pool.query('Update Teams set status = $1 where teamid = $2', ['Revoked', teamid]);
+
+        return response.status(201).send('Registeration Revoked');
     } catch (err) {
         console.log(err.message);
         return response.sendStatus(500);
