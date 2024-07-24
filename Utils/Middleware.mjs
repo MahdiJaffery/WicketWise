@@ -31,7 +31,10 @@ export const ValidateDatabase = async (request, response, next) => {
 
         res = await pool.query('Delete from Teams where tournamentid in (Select TournamentId from Tournaments where status = $1)', ['Ended']);
         
-        res = await pool.query('Update Tournaments set status = $1 where startdate > current_date', ['Pending'])
+        res = await pool.query('Update Tournaments set status = $1 where startdate > current_date', ['Pending']);
+
+        res = await pool.query('Update Tournaments set status = $1 where startdate <= current_date and enddate >= current_date', ['Ongoing']);
+        
         next();
     } catch (err) {
         console.log(err.message);
