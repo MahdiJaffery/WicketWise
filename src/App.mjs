@@ -5,6 +5,7 @@ import session from 'express-session';
 import pool from '../Utils/Database.mjs';
 import routeBookings from '../Routes/Booking.mjs'
 import routeGrounds from '../Routes/Grounds.mjs'
+import routeTournaments from '../Routes/Tournaments.mjs'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.use(session({
 
 app.use('/api/bookings', routeBookings);
 app.use('/api/grounds', routeGrounds);
+app.use('/api/tournaments', routeTournaments);
 
 app.post('/api/auth', async (request, response) => {
     const { body: { username, password } } = request;
