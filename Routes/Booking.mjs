@@ -36,8 +36,7 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
         if (groundId === 0)
             return response.status(404).send('Ground Not Found');
 
-        const dateString = date;
-        const isoDateString = dateString.replace(' ', 'T');
+        const isoDateString = date.replace(' ', 'T');
         const newDate = new Date(isoDateString);
         const hour = newDate.getHours();
 
