@@ -1,3 +1,5 @@
+import pool from "./Database.mjs";
+
 export const validationCheck = (request, response, next) => {
     request.sessionStore.get(request.sessionID, (err, session) => {
         // console.log(session);
@@ -17,4 +19,21 @@ export const parseId = (request, response, next) => {
 
     request.parsedId = parsedId;
     next();
+}
+
+export const ValidateDatabase = async (request, response, next) => {
+    try {
+        const query = 'Update Bookings set status = $1 where dateof::date < current_date or (dateof::date < current_date and Extract(hour from dateof) + durationinhours <= Extract(hour from current_time))';
+
+        let res = await pool.query(query, ['Invalid']);
+
+        res = await pool.query('Update Tournaments set status = $1 where endDate <= current_date', ['Ended']);
+
+        res = await pool.query('Delete from Teams where tournamentid in (Select TournamentId from Tournaments where status = $1)', ['Ended']);
+        
+        next();
+    } catch (err) {
+        console.log(err.message);
+        return response.sendStatus(500);
+    }
 }

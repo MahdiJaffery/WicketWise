@@ -57,7 +57,7 @@ router.post('/register', validationCheck, async (request, response) => {
 
         const TeamID = res.rowCount + 1;
 
-        res = await pool.query('Select * from Tournaments where TournamentName = $1', [tourneyName]);
+        res = await pool.query('Select * from Tournaments where TournamentName = $1 and status = $2', [tourneyName, 'Ongoing']);
 
         if (!res.rowCount)
             return response.status(400).send('Tournament Not Found');

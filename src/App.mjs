@@ -6,6 +6,7 @@ import pool from '../Utils/Database.mjs';
 import routeBookings from '../Routes/Booking.mjs'
 import routeGrounds from '../Routes/Grounds.mjs'
 import routeTournaments from '../Routes/Tournaments.mjs'
+import { ValidateDatabase } from '../Utils/Middleware.mjs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,7 +25,7 @@ app.use('/api/bookings', routeBookings);
 app.use('/api/grounds', routeGrounds);
 app.use('/api/tournaments', routeTournaments);
 
-app.post('/api/auth', async (request, response) => {
+app.post('/api/auth', ValidateDatabase, async (request, response) => {
     const { body: { username, password } } = request;
 
     try {
@@ -45,7 +46,7 @@ app.post('/api/auth', async (request, response) => {
     }
 })
 
-app.post('/api/auth/register', async (request, response) => {
+app.post('/api/auth/register', ValidateDatabase, async (request, response) => {
     let { body: { username, password } } = request;
 
     try {
