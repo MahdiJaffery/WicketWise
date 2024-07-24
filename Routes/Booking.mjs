@@ -41,8 +41,6 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
         const newDate = new Date(isoDateString);
         const hour = newDate.getHours();
 
-        console.log(hour);
-
         res = await pool.query('Select * from Bookings where dateof::date = $1::date and Extract(hour from dateof) <= $2 and Extract(hour from dateof) + durationinhours > $2', [date, hour]);
 
         if (res.rowCount > 0)
