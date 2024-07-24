@@ -41,4 +41,40 @@ router.post('/create', validationCheck, async (request, response) => {
     }
 })
 
+router.post('/register', validationCheck, async (request, response) => {
+    const { body: { teamname, memberCount, tourneyName } } = request;
+
+    if (!(teamname && memberCount && tourneyName) || (memberCount > 5 && memberCount < 1))
+        return response.status(400).send('Enter\nteamname: <Team Name>\nmemberCount: <Team Member Count 1 <= count <= 5>\ntourneyName: <Tournament Name>');
+
+    try {
+        let res = await pool.query('Select * from Teams where TeamName = $1', [teamname]);
+
+        if (res.rowCount)
+            return response.status(400).send('Team already Registered');
+
+        res = await pool.query('Select * from Teams');
+
+        const TeamID = res.rowCount + 1;
+
+        res = await pool.query('Select * from Tournaments where TournamentName = $1', [tourneyName]);
+
+        if (!res.rowCount)
+            return response.status(400).send('Tournament Not Found');
+
+        const TourneyID = res.rows[0].tournamentid;
+
+        res = await pool.query('Insert into Teams values ($1, $2, $3, $4)',
+            [TeamID, TourneyID, teamname, memberCount]
+        );
+
+        res = await pool.query('Update Tournaments set TeamsRgd = TeamsRgd + 1 where TournamentId = $1', [TourneyID]);
+
+        return response.status(201).send('Registered Team for Tournament');
+    } catch (err) {
+        console.log(err.message);
+        return response.sendStatus(500);
+    }
+})
+
 export default router;
