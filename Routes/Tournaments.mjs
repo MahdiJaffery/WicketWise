@@ -77,8 +77,8 @@ router.post('/register', validationCheck, async (request, response) => {
     }
 })
 
-router.post('/cancelReg', validationCheck, async (request, response) => {
-    let { body: { teamid } } = request;
+router.delete('/:teamid', validationCheck, async (request, response) => {
+    let { params: { teamid } } = request;
     teamid = parseInt(teamid);
 
     if (isNaN(teamid)) return response.sendStatus(400);
