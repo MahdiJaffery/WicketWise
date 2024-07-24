@@ -36,6 +36,18 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
         if (groundId === 0)
             return response.status(404).send('Ground Not Found');
 
+        const dateString = date;
+        const isoDateString = dateString.replace(' ', 'T');
+        const newDate = new Date(isoDateString);
+        const hour = newDate.getHours();
+
+        console.log(hour);
+
+        res = await pool.query('Select * from Bookings where dateof::date = $1::date and Extract(hour from dateof) <= $2 and Extract(hour from dateof) + durationinhours > $2', [date, hour]);
+
+        if (res.rowCount > 0)
+            return response.status(400).send('Booking already Exists for this time slot :(');
+
         res = await pool.query('Select * from Bookings');
 
         bookingId = res.rowCount + 1;
