@@ -31,11 +31,11 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
     try {
         let res = await pool.query('Select * from Grounds where name = $1', [ground]);
 
+        if (res.rowCount === 0)
+            return response.status(404).send('Ground Not Found');
+
         groundId = res.rows[0].groundid;
         const location = res.rows[0].location;
-
-        if (groundId === 0)
-            return response.status(404).send('Ground Not Found');
 
         const isoDateString = date.replace(' ', 'T');
         const newDate = new Date(isoDateString);
@@ -70,7 +70,7 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
 
 router.delete('/remove/:id', validationCheck, parseId, async (request, response) => {
     const { parsedId } = request;
-    
+
     try {
         let res = await pool.query('Select * from Bookings where bookingid = $1 and status = $2', [parsedId, 'Valid']);
 

@@ -3,13 +3,8 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 
 import pool from '../Utils/Database.mjs';
-import routeBookings from '../Routes/Booking.mjs'
-import routeGrounds from '../Routes/Grounds.mjs'
-import routeTournaments from '../Routes/Tournaments.mjs'
-import routeContact from '../Routes/ContactUs.mjs'
-import routeStats from '../Routes/PlayerStats.mjs'
-import routeMatches from '../Routes/Matches.mjs'
-import routeLeaderboard from '../Routes/Leaderboard.mjs'
+import index from './Index.mjs'
+
 import { checkAdmin, ValidateDatabase, validationCheck } from '../Utils/Middleware.mjs';
 
 const app = express();
@@ -25,13 +20,7 @@ app.use(session({
     }
 }))
 
-app.use('/api/bookings', routeBookings);
-app.use('/api/grounds', routeGrounds);
-app.use('/api/tournaments', routeTournaments);
-app.use('/api/contactus', routeContact);
-app.use('/api/playerstats', routeStats);
-app.use('/api/matches', routeMatches);
-app.use('/api/leaderboard', routeLeaderboard);
+app.use(index);
 
 app.post('/api/auth', ValidateDatabase, async (request, response) => {
     const { body: { username, password } } = request;
