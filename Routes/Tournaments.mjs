@@ -34,6 +34,10 @@ router.post('/create', validationCheck, async (request, response) => {
             [TournamentID, name, start, end, 'Ongoing', 0]
         );
 
+        res = await pool.query('Update Tournaments set status = $1 where startdate > current_date', ['Pending']);
+
+        res = await pool.query('Update Tournaments set status = $1 where enddate < current_date', ['Ended']);
+
         return response.sendStatus(201);
     } catch (err) {
         console.log(err.message);
@@ -44,7 +48,7 @@ router.post('/create', validationCheck, async (request, response) => {
 router.post('/register', validationCheck, async (request, response) => {
     const { body: { teamname, memberCount, tourneyName } } = request;
 
-    if (!(teamname && memberCount && tourneyName) || (memberCount > 5 && memberCount < 1))
+    if (!(teamname && memberCount && tourneyName) || (parseInt(memberCount)) > 5 || (parseInt(memberCount) < 1))
         return response.status(400).send('Enter\nteamname: <Team Name>\nmemberCount: <Team Member Count 1 <= count <= 5>\ntourneyName: <Tournament Name>');
 
     try {
@@ -93,6 +97,8 @@ router.delete('/:teamid', validationCheck, async (request, response) => {
             return response.status(200).send('Team Not Registered');
 
         res = await pool.query('Update Teams set status = $1 where teamid = $2', ['Revoked', teamid]);
+
+        res = await pool.query('Update Tournaments set teamsrgd = teamsrgd - 1 where tournamentid in (Select tournamentid from Teams where teamid = $1)', [teamid]);
 
         return response.status(201).send('Registeration Revoked');
     } catch (err) {
