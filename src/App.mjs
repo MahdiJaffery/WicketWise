@@ -4,7 +4,6 @@ import session from 'express-session';
 
 import pool from '../Utils/Database.mjs';
 import index from './Index.mjs'
-
 import { checkAdmin, ValidateDatabase, validationCheck } from '../Utils/Middleware.mjs';
 
 const app = express();
