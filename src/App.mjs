@@ -68,14 +68,14 @@ app.post('/api/auth/register', ValidateDatabase, async (request, response) => {
 
         let res = await pool.query('Select * from Users');
 
-        const UserId = res.rowCount + 1;
+        const userid = res.rowCount + 1;
 
-        res = await pool.query('Insert into Users (UserId, username, password) values ($1, $2, $3)',
-            [UserId, username, password]
+        res = await pool.query('Insert into Users (userid, username, password) values ($1, $2, $3)',
+            [userid, username, password]
         );
 
-        const User = { UserId, username, password };
-
+        const User = { userid, username, password };
+        console.log(User);
         request.session.user = User;
         response.cookie('Cricket', 'Wicket', { maxAge: 6000 * 10 });
         return response.status(201).send(User);
