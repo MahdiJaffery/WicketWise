@@ -34,8 +34,24 @@ export const ValidateDatabase = async (request, response, next) => {
         res = await pool.query('Update Tournaments set status = $1 where startdate > current_date', ['Pending']);
 
         res = await pool.query('Update Tournaments set status = $1 where startdate <= current_date and enddate >= current_date', ['Ongoing']);
-        
+
         next();
+    } catch (err) {
+        console.log(err.message);
+        return response.sendStatus(500);
+    }
+}
+
+export const checkAdmin = async (request, response, next) => {
+    const { session: { user: { userid } } } = request;
+
+    try {
+        const res = await pool.query('Select * from Users where userid = $1', [userid]);
+
+        if (res.rows[0].type === 'admin')
+            next();
+        else
+            return response.sendStatus(401);
     } catch (err) {
         console.log(err.message);
         return response.sendStatus(500);
