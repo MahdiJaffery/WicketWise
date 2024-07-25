@@ -9,7 +9,7 @@ import routeTournaments from '../Routes/Tournaments.mjs'
 import routeContact from '../Routes/ContactUs.mjs'
 import routeStats from '../Routes/PlayerStats.mjs'
 import routeMatches from '../Routes/Matches.mjs'
-import { ValidateDatabase } from '../Utils/Middleware.mjs';
+import { checkAdmin, ValidateDatabase, validationCheck } from '../Utils/Middleware.mjs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -99,6 +99,17 @@ app.post('/api/auth/register', ValidateDatabase, async (request, response) => {
         return response.status(201).send(User);
     } catch (err) {
         console.log(err.message);
+    }
+})
+
+app.get('/api/users', validationCheck, checkAdmin, async (request, response) => {
+    try {
+        const res = await pool.query('Select * from Users');
+
+        return response.status(200).send(res.rows);
+    } catch (err) {
+        console.log(err.message);
+        return response.sendStatus(500);
     }
 })
 
