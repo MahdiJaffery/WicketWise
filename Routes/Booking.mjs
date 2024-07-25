@@ -57,8 +57,6 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
         let price = parseInt(res.rows[0].priceperhour);
         price *= duration;
 
-        console.log(`UserId : ${userid}\nGroundId: ${groundId}\nLocation: ${location}\nCost: ${price}`);
-
         res = await pool.query('Insert into BookingHistory values ($1, $2, $3, $4, $5, $6)',
             [bookingId, userid, groundId, location, price, 'Valid']
         );
@@ -72,7 +70,7 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
 
 router.delete('/remove/:id', validationCheck, parseId, async (request, response) => {
     const { parsedId } = request;
-    console.log(parsedId);
+    
     try {
         let res = await pool.query('Select * from Bookings where bookingid = $1 and status = $2', [parsedId, 'Valid']);
 
@@ -80,7 +78,7 @@ router.delete('/remove/:id', validationCheck, parseId, async (request, response)
 
         res = await pool.query('Update Bookings set status = $1 where bookingid = $2', ['Cancelled', parsedId]);
         res = await pool.query('Update BookingHistory set status = $1 where bookingid = $2', ['Cancelled', parsedId]);
-        
+
         return response.status(200).send('Booking Nullified :(');
     } catch (err) {
         console.log(err.message);
