@@ -75,7 +75,7 @@ app.post('/api/auth/register', ValidateDatabase, async (request, response) => {
         );
 
         const User = { userid, username, password };
-        console.log(User);
+
         request.session.user = User;
         response.cookie('Cricket', 'Wicket', { maxAge: 6000 * 10 });
         return response.status(201).send(User);
