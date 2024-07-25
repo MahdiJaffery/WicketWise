@@ -57,3 +57,19 @@ export const checkAdmin = async (request, response, next) => {
         return response.sendStatus(500);
     }
 }
+
+export const checkAuthorisation = async (request, response, next) => {
+    const { session: { user: { userid } } } = request;
+
+    try {
+        const res = await pool.query('Select * from Users where userid = $1', [userid]);
+
+        if (res.rows[0].type === 'admin' || res.rows[0].type === 'umpire')
+            next();
+        else
+            return response.sendStatus(401);
+    } catch (err) {
+        console.log(err.message);
+        return response.sendStatus(500);
+    }
+}

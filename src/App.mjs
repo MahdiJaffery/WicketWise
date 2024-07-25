@@ -8,6 +8,7 @@ import routeGrounds from '../Routes/Grounds.mjs'
 import routeTournaments from '../Routes/Tournaments.mjs'
 import routeContact from '../Routes/ContactUs.mjs'
 import routeStats from '../Routes/PlayerStats.mjs'
+import routeMatches from '../Routes/Matches.mjs'
 import { ValidateDatabase } from '../Utils/Middleware.mjs';
 
 const app = express();
@@ -28,6 +29,7 @@ app.use('/api/grounds', routeGrounds);
 app.use('/api/tournaments', routeTournaments);
 app.use('/api/contactus', routeContact);
 app.use('/api/playerstats', routeStats);
+app.use('/api/matches', routeMatches);
 
 app.post('/api/auth', ValidateDatabase, async (request, response) => {
     const { body: { username, password } } = request;
