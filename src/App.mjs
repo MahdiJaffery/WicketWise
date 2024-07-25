@@ -9,6 +9,7 @@ import routeTournaments from '../Routes/Tournaments.mjs'
 import routeContact from '../Routes/ContactUs.mjs'
 import routeStats from '../Routes/PlayerStats.mjs'
 import routeMatches from '../Routes/Matches.mjs'
+import routeLeaderboard from '../Routes/Leaderboard.mjs'
 import { checkAdmin, ValidateDatabase, validationCheck } from '../Utils/Middleware.mjs';
 
 const app = express();
@@ -30,6 +31,7 @@ app.use('/api/tournaments', routeTournaments);
 app.use('/api/contactus', routeContact);
 app.use('/api/playerstats', routeStats);
 app.use('/api/matches', routeMatches);
+app.use('/api/leaderboard', routeLeaderboard);
 
 app.post('/api/auth', ValidateDatabase, async (request, response) => {
     const { body: { username, password } } = request;
