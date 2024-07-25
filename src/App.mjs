@@ -7,6 +7,7 @@ import routeBookings from '../Routes/Booking.mjs'
 import routeGrounds from '../Routes/Grounds.mjs'
 import routeTournaments from '../Routes/Tournaments.mjs'
 import routeContact from '../Routes/ContactUs.mjs'
+import routeStats from '../Routes/PlayerStats.mjs'
 import { ValidateDatabase } from '../Utils/Middleware.mjs';
 
 const app = express();
@@ -26,6 +27,7 @@ app.use('/api/bookings', routeBookings);
 app.use('/api/grounds', routeGrounds);
 app.use('/api/tournaments', routeTournaments);
 app.use('/api/contactus', routeContact);
+app.use('/api/playerstats', routeStats);
 
 app.post('/api/auth', ValidateDatabase, async (request, response) => {
     const { body: { username, password } } = request;
@@ -49,7 +51,10 @@ app.post('/api/auth', ValidateDatabase, async (request, response) => {
 })
 
 app.post('/api/auth/register', ValidateDatabase, async (request, response) => {
-    let { body: { username, password } } = request;
+    let { body: { username, password, displayname, type } } = request;
+
+    if (!(username && password && displayname))
+        return response.status(400).send('Enter\nusername: your_username\npassword: your_password\ndisplayname: ypur_display_name');
 
     try {
         let Unique = false, modification = false;
@@ -72,11 +77,20 @@ app.post('/api/auth/register', ValidateDatabase, async (request, response) => {
 
         const userid = res.rowCount + 1;
 
-        res = await pool.query('Insert into Users (userid, username, password) values ($1, $2, $3)',
-            [userid, username, password]
+        res = await pool.query('Insert into Users (userid, displayname, username, password, type) values ($1, $2, $3, $4, $5)',
+            [userid, displayname, username, password, 'Player']
         );
 
-        const User = { userid, username, password };
+        if (type)
+            res = await pool.query('Update Users set type = $1 where userid = $2',
+                [type, userid]
+            );
+
+        res = await pool.query('Insert into PlayerStats values ($1, $2, $3, $4, $5, $6)',
+            [userid, displayname, 0, 0, 0, 0]
+        );
+
+        const User = { userid, displayname, username, password };
 
         request.session.user = User;
         response.cookie('Cricket', 'Wicket', { maxAge: 6000 * 10 });
