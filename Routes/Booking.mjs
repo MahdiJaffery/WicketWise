@@ -80,6 +80,7 @@ router.delete('/remove/:id', validationCheck, parseId, async (request, response)
 
         res = await pool.query('Update Bookings set status = $1 where bookingid = $2', ['Cancelled', parsedId]);
         res = await pool.query('Update BookingHistory set status = $1 where bookingid = $2', ['Cancelled', parsedId]);
+        
         return response.status(200).send('Booking Nullified :(');
     } catch (err) {
         console.log(err.message);
