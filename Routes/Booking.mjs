@@ -23,7 +23,7 @@ router.get('/current-bookings', validationCheck, async (request, response) => {
 
 router.post('/makeBooking', validationCheck, async (request, response) => {
     const { session: { user: { userid } }, body: { ground, duration, date } } = request;
-    let groundId = 0, bookingId = 0;
+    let groundId = 0, bookingId = 0, price = 0, location = "";
 
     if (!(ground && duration && date))
         return response.status(400).send('Enter \nGround: <Ground Name>, \nDuration: <Hours>,\nDate: <Year-Month-Day Time>');
@@ -35,7 +35,8 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
             return response.status(404).send('Ground Not Found');
 
         groundId = res.rows[0].groundid;
-        const location = res.rows[0].location;
+        location = res.rows[0].location;
+        price = parseInt(res.rows[0].priceperhour) * duration;
 
         const isoDateString = date.replace(' ', 'T');
         const newDate = new Date(isoDateString);
@@ -51,11 +52,6 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
         bookingId = res.rowCount + 1;
 
         res = await pool.query('Insert into Bookings values ($1, $2, $3, $4, $5, $6)', [bookingId, userid, groundId, duration, date, 'Valid']);
-
-        res = await pool.query('Select priceperhour from Grounds where GroundId = $1', [groundId]);
-
-        let price = parseInt(res.rows[0].priceperhour);
-        price *= duration;
 
         res = await pool.query('Insert into BookingHistory values ($1, $2, $3, $4, $5, $6)',
             [bookingId, userid, groundId, location, price, 'Valid']
