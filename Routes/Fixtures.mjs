@@ -16,8 +16,8 @@ router.get('/', validationCheck, checkAuthorisation, async (request, response) =
     try {
         res = await pool.query('Select * from Teams where status = $1 and tournamentid = $2', ['Registered', parseInt(tournamentid)]);
 
-        if (!res.rowCount)
-            return response.status(404).send('No Teams Registered for This Tournament');
+        if (res.rowCount < 2)
+            return response.status(404).send('Insufficient Teams Registered for This Tournament');
 
         for (let i = 0; i < res.rowCount; i++)
             Teams.push(res.rows[i].teamname);
