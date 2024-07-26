@@ -8,6 +8,9 @@ const router = Router();
 router.post('/uploadStats', validationCheck, checkAuthorisation, async (request, response) => {
     let { body: { userid, runsscored, ballsfaced } } = request;
 
+    if (!(userid, runsscored, ballsfaced))
+        return response.status(400).send('Enter\nuserid: <userid>\nrunsscored: <runsscored>\nballsfaced: <ballsfaced>');
+
     userid = parseInt(userid);
     runsscored = parseInt(runsscored);
     ballsfaced = parseInt(ballsfaced);
