@@ -24,11 +24,9 @@ router.get('/', validationCheck, checkAuthorisation, async (request, response) =
 
         let matchCount = 0;
         for (let i = 0; i < Teams.length; i++)
-            for (let j = i + 1; j < Teams.length; j++) {
-                // console.log(Teams[i] + 'vs' + Teams[j]);
-                matchCount++;
-                Fixtures.push(`Match ${matchCount}:     ${Teams[i]}   vs   ${Teams[j]}`);
-            }
+            for (let j = i + 1; j < Teams.length; j++)
+                Fixtures.push(`Match ${++matchCount}:     ${Teams[i]}   vs   ${Teams[j]}`);
+
 
         return response.status(200).send(Fixtures);
     } catch (err) {
