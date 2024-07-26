@@ -27,7 +27,6 @@ router.get('/', validationCheck, checkAuthorisation, async (request, response) =
             for (let j = i + 1; j < Teams.length; j++)
                 Fixtures.push(`Match ${++matchCount}:     ${Teams[i]}   vs   ${Teams[j]}`);
 
-
         return response.status(200).send(Fixtures);
     } catch (err) {
         console.log(err.message);
