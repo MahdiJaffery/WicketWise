@@ -29,7 +29,7 @@ router.post('/makeBooking', validationCheck, async (request, response) => {
         return response.status(400).send('Enter \nGround: <Ground Name>, \nDuration: <Hours>,\nDate: <Year-Month-Day Time>');
 
     try {
-        let res = await pool.query('Select * from Grounds where name = $1', [ground]);
+        let res = await pool.query('Select * from Grounds where name = $1 and lastaudit is not null', [ground]);
 
         if (res.rowCount === 0)
             return response.status(404).send('Ground Not Found');
