@@ -21,6 +21,37 @@ router.get('/', validationCheck, async (request, response) => {
     }
 })
 
+router.get('/status/:id', validationCheck, async (request, response) => {
+    let { params: { id }, session: { user: { userid } } } = request;
+
+    id = parseInt(id);
+    userid = parseInt(userid);
+
+    let authorised = false;
+
+    try {
+        let res = await pool.query('Select * from Users where userid = $1 and (type = $2 or type = $3)',
+            [userid, 'admin', 'umpire']
+        );
+        console.log(res.rows);
+        if (res.rowCount)
+            authorised = true;
+        if (authorised)
+            res = await pool.query('Select * from Bookings where bookingid = $1', [userid]);
+        else
+            res = await pool.query('Select * from Bookings where bookingid = $1 and userid = $2',
+                [id, userid]
+            );
+
+        if (!res.rowCount)
+            return response.sendStatus(401);
+        return response.status(200).send(res.rows);
+    } catch (err) {
+        console.log(err.message);
+        return response.sendStatus(500);
+    }
+})
+
 router.post('/makeBooking', validationCheck, async (request, response) => {
     const { session: { user: { userid } }, body: { ground, duration, date } } = request;
     let groundId = 0, bookingId = 0, price = 0, location = "";
