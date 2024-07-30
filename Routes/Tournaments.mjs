@@ -5,6 +5,15 @@ import pool from "../Utils/Database.mjs";
 
 const router = Router();
 
+async function checkUser(id) {
+    let res = await pool.query('Select * from Users where userid = $1', [id]);
+    console.log(res.rows);
+    console.log(res.rowCount);
+    if (!res.rowCount)
+        return false;
+    return true;
+}
+
 router.get('/', validationCheck, async (request, response) => {
     const { query: { filter } } = request;
 
@@ -88,35 +97,26 @@ router.get('/pitchReport', validationCheck, async (request, response) => {
 })
 
 router.post('/register', validationCheck, async (request, response) => {
-    const { body: { teamname, memberCount, tourneyName } } = request;
+    const { body: { captainid, captainname, tournamentid, teamname, members } } = request;
 
-    if (!(teamname && memberCount && tourneyName) || (parseInt(memberCount)) > 5 || (parseInt(memberCount) < 1))
-        return response.status(400).send('Enter\nteamname: <Team Name>\nmemberCount: <Team Member Count 1 <= count <= 5>\ntourneyName: <Tournament Name>');
+    if (await checkUser(captainid) === false)
+        return response.status(400).send('Invalid Captain ID');
 
     try {
-        let res = await pool.query('Select * from Teams where TeamName = $1', [teamname]);
+        let res = await pool.query('Select * from Tournaments where Tournamentid = $1 and status <> $2', [tournamentid, 'Ended']);
 
-        if (res.rowCount)
-            return response.status(400).send('Team already Registered');
+        if (!res.rowCount)
+            return response.status(404).send('Tournament Not Found');
 
         res = await pool.query('Select * from Teams');
 
-        const TeamID = res.rowCount + 1;
+        const teamId = res.rowCount + 1;
 
-        res = await pool.query('Select * from Tournaments where TournamentName = $1 and (status = $2 or status = $3)', [tourneyName, 'Ongoing', 'Pending']);
-
-        if (!res.rowCount)
-            return response.status(400).send('Tournament Not Found');
-
-        const TourneyID = res.rows[0].tournamentid;
-
-        res = await pool.query('Insert into Teams values ($1, $2, $3, $4, $5)',
-            [TeamID, TourneyID, teamname, memberCount, 'Registered']
+        res = await pool.query('Insert into Teams values ($1, $2, $3, $4, $5, $6, $7)',
+            [teamId, captainid, captainname, tournamentid, teamname, members, 'Registered']
         );
 
-        res = await pool.query('Update Tournaments set TeamsRgd = TeamsRgd + 1 where TournamentId = $1', [TourneyID]);
-
-        return response.status(201).send({ msg: 'Registered Team for Tournament', teamid: TeamID });
+        return response.status(201).send(`Team Registered\nRegisteration ID: ${teamId}`);
     } catch (err) {
         console.log(err.message);
         return response.sendStatus(500);
