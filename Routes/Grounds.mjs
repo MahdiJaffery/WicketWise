@@ -6,8 +6,14 @@ import { validationCheck } from "../Utils/Middleware.mjs";
 const router = Router();
 
 router.get('/', validationCheck, async (request, response) => {
+    const { query: { filter } } = request;
+
     try {
-        const res = await pool.query('Select * from Grounds where lastaudit is not null');
+        let res;
+        if (filter)
+            res = await pool.query('Select * from Grounds where location like $1 and lastaudit is not null order by grade desc', [`%${filter}%`]);
+        else
+            res = await pool.query('Select * from Grounds where lastaudit is not null order by grade');
 
         return response.status(200).send(res.rows);
     } catch (err) {
@@ -32,7 +38,7 @@ router.post('/add', validationCheck, async (request, response) => {
 
         const GroundID = res.rowCount + 1;
 
-        res = await pool.query('Insert into Grounds values ($1, $2, $3, $4, $5, $6, $7, null)', [GroundID, name, location,'U', price, 'U', 'U']);
+        res = await pool.query('Insert into Grounds values ($1, $2, $3, $4, $5, $6, $7, null)', [GroundID, name, location, 'U', price, 'U', 'U']);
 
         return response.status(201).send('Ground Added to Database :)');
     } catch (err) {
