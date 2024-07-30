@@ -5,13 +5,19 @@ import { checkAuthorisation, validationCheck } from "../Utils/Middleware.mjs";
 
 const router = Router();
 
-router.get('/', validationCheck, checkAuthorisation, async (request, response) => {
-    const { body: { tournamentid } } = request;
+router.get('/:id', validationCheck, checkAuthorisation, async (request, response) => {
+    const { params: { id } } = request;
+    const tournamentid = parseInt(id);
+
+    if (isNaN(tournamentid)) return response.sendStatus(400);
+
+    let res = await pool.query('Select * from Tournaments where tournamentid = $1', [tournamentid]);
+    
+    if (!res.rowCount) return response.status(404).send('Tournament Not Found');
 
     if (!tournamentid)
         return response.status(400).send('Enter\ntournamentid: tournamentid');
 
-    let res;
     let Teams = [], Fixtures = [];
     try {
         res = await pool.query('Select * from Teams where status = $1 and tournamentid = $2', ['Registered', parseInt(tournamentid)]);
