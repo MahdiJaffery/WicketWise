@@ -6,8 +6,15 @@ import pool from "../Utils/Database.mjs";
 const router = Router();
 
 router.get('/', validationCheck, async (request, response) => {
+    const { query: { filter } } = request;
+
     try {
-        const res = await pool.query('Select * from Tournaments where status = $1', ['Ongoing']);
+        let res = await pool.query('Select status from Tournaments where status = $1', [filter]);
+
+        if (res.rowCount)
+            res = await pool.query('Select * from Tournaments where status = $1', [filter]);
+        else
+            res = await pool.query('Select * from Tournaments where status = $1', ['Ongoing']);
 
         if (!res.rowCount)
             return response.status(200).send('No Ongoing Tournaments');
@@ -27,7 +34,7 @@ router.post('/create', validationCheck, async (request, response) => {
 
     try {
         let res = await pool.query('Select * from Tournaments where tournamentname = $1 and startdate = $2 and enddate = $3', [name, start, end]);
-        
+
         if (res.rowCount)
             return response.status(400).send('Tournament already exists');
 
@@ -68,7 +75,7 @@ router.get('/pitchReport', validationCheck, async (request, response) => {
         const testDate = res.rows[0].startdate;
 
         res = await pool.query('Select $1 - current_date as days', [testDate]);
-        
+
         const Pitches = ['Green Pitch', 'Flat Track Pitch', 'Dry Pitch', 'Wet Pitch', 'Dusty Pitch', 'Dead Pitch'];
 
         if (res.rows[0].days <= 1)
