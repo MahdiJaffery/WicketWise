@@ -11,6 +11,7 @@ import routeContact from '../Routes/ContactUs.mjs'
 import routeStats from '../Routes/PlayerStats.mjs'
 import routeMatches from '../Routes/Matches.mjs'
 import routeLeaderboard from '../Routes/Leaderboard.mjs'
+import routeUmpires from '../Routes/Umpire.mjs'
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use('/api/playerstats', routeStats);
 router.use('/api/matches', routeMatches);
 router.use('/api/leaderboard', routeLeaderboard);
 router.use('/api/fixtures', routeFixtures);
+router.use('/api/umpire', routeUmpires);
 
 export default router;
