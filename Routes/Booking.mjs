@@ -5,7 +5,7 @@ import pool from "../Utils/Database.mjs";
 
 const router = Router();
 
-router.get('/current-bookings', validationCheck, async (request, response) => {
+router.get('/', validationCheck, async (request, response) => {
     const { user: { userid } } = request.session;
 
     try {
