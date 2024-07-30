@@ -3,13 +3,13 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import { Router } from 'express';
 
-import routeFixtures from '../Routes/Fixtures.mjs'
 import routeBookings from '../Routes/Booking.mjs'
-import routeGrounds from '../Routes/Grounds.mjs'
-import routeTournaments from '../Routes/Tournaments.mjs'
 import routeContact from '../Routes/ContactUs.mjs'
-import routeStats from '../Routes/PlayerStats.mjs'
+import routeFixtures from '../Routes/Fixtures.mjs'
+import routeGrounds from '../Routes/Grounds.mjs'
 import routeLeaderboard from '../Routes/Leaderboard.mjs'
+import routeStats from '../Routes/PlayerStats.mjs'
+import routeTournaments from '../Routes/Tournaments.mjs'
 import routeUmpires from '../Routes/Umpire.mjs'
 
 const router = Router();
