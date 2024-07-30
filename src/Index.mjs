@@ -9,7 +9,6 @@ import routeGrounds from '../Routes/Grounds.mjs'
 import routeTournaments from '../Routes/Tournaments.mjs'
 import routeContact from '../Routes/ContactUs.mjs'
 import routeStats from '../Routes/PlayerStats.mjs'
-import routeMatches from '../Routes/Matches.mjs'
 import routeLeaderboard from '../Routes/Leaderboard.mjs'
 import routeUmpires from '../Routes/Umpire.mjs'
 
@@ -30,7 +29,6 @@ router.use('/api/grounds', routeGrounds);
 router.use('/api/tournaments', routeTournaments);
 router.use('/api/contactus', routeContact);
 router.use('/api/playerstats', routeStats);
-router.use('/api/matches', routeMatches);
 router.use('/api/leaderboard', routeLeaderboard);
 router.use('/api/fixtures', routeFixtures);
 router.use('/api/umpire', routeUmpires);
