@@ -3,7 +3,7 @@ import { Router } from "express";
 const router = Router();
 
 async function getWeather(city) {
-    const apiKey = 'd95ca0e6b89da19dee88e30429cd04fb';
+    const apiKey = 'your_api';
     const City = city;
     const url = `http://api.openweathermap.org/data/2.5/weather?q=${City}&appid=${apiKey}`;
 
