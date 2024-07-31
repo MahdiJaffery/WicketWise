@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import { Router } from 'express';
 
+import routeAbout from '../Routes/About.mjs'
 import routeBookings from '../Routes/Booking.mjs'
 import routeContact from '../Routes/ContactUs.mjs'
 import routeFixtures from '../Routes/Fixtures.mjs'
