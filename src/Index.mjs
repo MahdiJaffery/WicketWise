@@ -25,6 +25,7 @@ router.use(session({
     }
 }))
 
+router.use(routeAbout);
 router.use('/api/bookings', routeBookings);
 router.use('/api/grounds', routeGrounds);
 router.use('/api/tournaments', routeTournaments);
