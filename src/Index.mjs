@@ -12,6 +12,7 @@ import routeLeaderboard from '../Routes/Leaderboard.mjs'
 import routeStats from '../Routes/PlayerStats.mjs'
 import routeTournaments from '../Routes/Tournaments.mjs'
 import routeUmpires from '../Routes/Umpire.mjs'
+import routeWeather from '../Routes/Weather.mjs'
 
 const router = Router();
 
@@ -34,5 +35,6 @@ router.use('/api/playerstats', routeStats);
 router.use('/api/leaderboard', routeLeaderboard);
 router.use('/api/fixtures', routeFixtures);
 router.use('/api/umpire', routeUmpires);
+router.use('/api/weather', routeWeather);
 
 export default router;
